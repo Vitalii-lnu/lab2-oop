@@ -1,5 +1,4 @@
 #include <iostream>
-#include <clocale> // Необхідно для setlocale
 #include "Triangle.h"
 
 using namespace std;
@@ -7,38 +6,32 @@ using namespace std;
 int main() {
     setlocale(0, ".1251");
 
-    Triangle CurrentTriangle;
-
+    Triangle T;
     cout << "--- Введення координат трикутника ---" << endl;
-    cout << "Вершина A (x y): "; 
-    if (!(cin >> CurrentTriangle.A.X >> CurrentTriangle.A.Y)) return 1;
-    
-    cout << "Вершина B (x y): "; 
-    if (!(cin >> CurrentTriangle.B.X >> CurrentTriangle.B.Y)) return 1;
-    
-    cout << "Вершина C (x y): "; 
-    if (!(cin >> CurrentTriangle.C.X >> CurrentTriangle.C.Y)) return 1;
+    cout << "A (x y): "; cin >> T.A.X >> T.A.Y;
+    cout << "B (x y): "; cin >> T.B.X >> T.B.Y;
+    cout << "C (x y): "; cin >> T.C.X >> T.C.Y;
 
-    // Перевірка на виродженість
-    if (IsTriangleDegenerate(CurrentTriangle)) {
-        cout << "Помилка: Трикутник вироджений (точки лежать на одній прямій)" << endl;
+    if (T.IsDegenerate()) {
+        cout << "Трикутник вироджений (Площа за Героном = " << T.GetArea() << ")" << endl;
         return 1;
     }
 
-    int PointsCount;
-    cout << "\nСкільки точок ви хочете перевірити? ";
-    cin >> PointsCount;
+    cout << "Площа: " << T.GetArea() << endl;
 
-    for (int i = 0; i < PointsCount; ++i) {
-        Point TargetPoint;
+    int n;
+    cout << "\nКількість точок для перевірки: ";
+    cin >> n;
+
+    for (int i = 0; i < n; ++i) {
+        Point P;
         cout << "Точка " << i + 1 << " (x y): ";
-        cin >> TargetPoint.X >> TargetPoint.Y;
+        cin >> P.X >> P.Y;
 
-        string Result = GetPointLocation(CurrentTriangle, TargetPoint);
-        cout << "Результат: " << Result << endl;
+        // Виклик методу через об'єкт трикутника
+        string Result = T.GetPointLocation(P);
+        cout << "Результат для точки (" << P.X << ", " << P.Y << "): " << Result << endl;
     }
-
-    cout << "\nПрограму завершено." << endl;
 
     return 0;
 }

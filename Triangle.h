@@ -2,24 +2,30 @@
 #define TRIANGLE_H
 
 #include <string>
-#include <vector>
+#include <cmath>
 
 struct Point {
-    double X;
-    double Y;
+    double X, Y;
+
+    double DistanceTo(Point Other) const;
 };
 
 struct Triangle {
     Point A, B, C;
+
+    // Обчислення площі за формулою герона
+    double GetArea() const;
+
+    // Перевірка на виродженість
+    bool IsDegenerate() const;
+
+    // Векторний добуток для перевірки точки
+    double GetCrossProduct(Point P1, Point P2, Point P) const;
+
+    std::string GetPointLocation(Point P) const;
 };
 
-// Перевірка на виродженість
-bool IsTriangleDegenerate(Triangle T);
 
-// Обчислення векторного добутку
-double GetCrossProduct(Point P1, Point P2, Point P3);
 
-// Визначення позиції точки
-std::string GetPointLocation(Triangle T, Point P);
 
 #endif
