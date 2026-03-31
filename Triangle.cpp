@@ -1,11 +1,10 @@
 #include "Triangle.h"
 
-// Реалізація методів Point
 double Point::DistanceTo(Point Other) const {
     return std::sqrt(std::pow(Other.X - X, 2) + std::pow(Other.Y - Y, 2));
 }
 
-// Реалізація методів Triangle
+
 double Triangle::GetArea() const {
     double a = A.DistanceTo(B);
     double b = B.DistanceTo(C);
