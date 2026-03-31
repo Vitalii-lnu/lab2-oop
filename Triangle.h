@@ -1,21 +1,25 @@
-#ifndef GEOMETRY_H
-#define GEOMETRY_H
+#ifndef TRIANGLE_H
+#define TRIANGLE_H
 
-#include <vector>
 #include <string>
+#include <vector>
 
 struct Point {
-    double x, y;
+    double X;
+    double Y;
 };
 
-enum class Location { Inside, OnEdge, Outside };
+struct Triangle {
+    Point A, B, C;
+};
 
-double CrossProduct(Point a, Point b, Point p);
+// Перевірка на виродженість
+bool IsTriangleDegenerate(Triangle T);
 
-bool isDegenerate(Point a, Point b, Point c);
+// Обчислення векторного добутку
+double GetCrossProduct(Point P1, Point P2, Point P3);
 
-Location CheckPointInTriangle(Point a, Point b, Point c, Point p);
-
-std::string LocationToString(Location loc);
+// Визначення позиції точки
+std::string GetPointLocation(Triangle T, Point P);
 
 #endif

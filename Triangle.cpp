@@ -1,41 +1,32 @@
 #include "Triangle.h"
 #include <cmath>
 
-double CrossProduct(Point a, Point b, Point p) {
-    
-    return (b.x - a.x) * (p.y - a.y) - (b.y - a.y) * (p.x - a.x);
+double GetCrossProduct(Point P1, Point P2, Point P3) {
+    return (P2.X - P1.X) * (P3.Y - P1.Y) - (P2.Y - P1.Y) * (P3.X - P1.X);
 }
 
-bool isDegenerate(Point a, Point b, Point c) {
-    return std::abs(CrossProduct(a, b, c)) < 1e-9;
+bool IsTriangleDegenerate(Triangle T) {
+    // Якщо векторний добуток сторін дорівнює 0, точки лежать на одній лінії
+    return std::abs(GetCrossProduct(T.A, T.B, T.C)) < 1e-9;
 }
 
-Location CheckPointInTriangle(Point a, Point b, Point c, Point p) {
-    double cp1 = CrossProduct(a, b, p);
-    double cp2 = CrossProduct(b, c, p);
-    double cp3 = CrossProduct(c, a, p);
+std::string GetPointLocation(Triangle T, Point P) {
+    double CP1 = GetCrossProduct(T.A, T.B, P);
+    double CP2 = GetCrossProduct(T.B, T.C, P);
+    double CP3 = GetCrossProduct(T.C, T.A, P);
 
-    bool has_neg = (cp1 < -1e-9) || (cp2 < -1e-9) || (cp3 < -1e-9);
-    bool has_pos = (cp1 > 1e-9) || (cp2 > 1e-9) || (cp3 > 1e-9);
+    bool HasNegative = (CP1 < -1e-9) || (CP2 < -1e-9) || (CP3 < -1e-9);
+    bool HasPositive = (CP1 > 1e-9) || (CP2 > 1e-9) || (CP3 > 1e-9);
 
-    // Якщо є і позитивні і негативні значення - точка зовні
-    if (has_neg && has_pos) {
-        return Location::Outside;
+    // Якщо є вектори різних знаків - точка зовні
+    if (HasNegative && HasPositive) {
+        return "Зовні";
     }
 
-    // Якщо хоча б один добуток нульовий
-    if (std::abs(cp1) < 1e-9 || std::abs(cp2) < 1e-9 || std::abs(cp3) < 1e-9) {
-        return Location::OnEdge;
+    // Якщо хоча б один добуток нульовий - на межі
+    if (std::abs(CP1) < 1e-9 || std::abs(CP2) < 1e-9 || std::abs(CP3) < 1e-9) {
+        return "На межі";
     }
 
-    return Location::Inside;
-}
-
-std::string LocationToString(Location loc) {
-    switch (loc) {
-        case Location::Inside: return "Всередині";
-        case Location::OnEdge: return "На межі";
-        case Location::Outside: return "Зовні";
-        default: return "Undefined";
-    }
+    return "Всередині";
 }
