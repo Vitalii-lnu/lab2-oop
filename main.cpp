@@ -29,8 +29,11 @@ int main() {
         cin >> P.X >> P.Y;
 
         // Виклик методу через об'єкт трикутника
-        string Result = T.GetPointLocation(P);
-        cout << "Результат для точки (" << P.X << ", " << P.Y << "): " << Result << endl;
+        string ResultVector = T.GetCrossPointLocation(P);
+        string ResultHeron = T.GetPointLocationHeron(P); 
+        cout << "Результат для точки методом векторного добутку(" << P.X << ", " << P.Y << "): " << ResultVector << endl;
+
+        cout << "Результат для точки методом Герона добутку(" << P.X << ", " << P.Y << "): " << ResultHeron << endl;
     }
 
     return 0;

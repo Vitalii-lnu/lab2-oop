@@ -14,6 +14,8 @@ struct Triangle {
     Point A, B, C;
 
     // Обчислення площі за формулою герона
+    double GetArea(Point A, Point B, Point C) const;
+
     double GetArea() const;
 
     // Перевірка на виродженість
@@ -22,7 +24,11 @@ struct Triangle {
     // Векторний добуток для перевірки точки
     double GetCrossProduct(Point P1, Point P2, Point P) const;
 
-    std::string GetPointLocation(Point P) const;
+    // Методом герона для перевірки точки
+    std::string GetPointLocationHeron(Point P) const;
+
+
+    std::string GetCrossPointLocation(Point P) const;
 };
 
 
