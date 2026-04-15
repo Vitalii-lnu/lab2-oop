@@ -4,36 +4,37 @@
 using namespace std;
 
 int main() {
+
     setlocale(0, ".1251");
 
     Triangle T;
-    cout << "--- Введення координат трикутника ---" << endl;
+    cout << "--- Triangle coordinates input ---" << endl;
     cout << "A (x y): "; cin >> T.A.X >> T.A.Y;
     cout << "B (x y): "; cin >> T.B.X >> T.B.Y;
     cout << "C (x y): "; cin >> T.C.X >> T.C.Y;
 
-    if (T.IsDegenerate()) {
-        cout << "Трикутник вироджений (Площа за Героном = " << T.GetArea() << ")" << endl;
-        return 1;
+    bool isDegenerate = T.IsDegenerate();
+
+    if (isDegenerate) {
+        cout << "Triangle is degenerate (Area = " << T.GetArea() << ")" << endl;
+    } else {
+        cout << "Area: " << T.GetArea() << endl;
     }
 
-    cout << "Площа: " << T.GetArea() << endl;
-
     int n;
-    cout << "\nКількість точок для перевірки: ";
+    cout << "\nNumber of points to check: ";
     cin >> n;
 
     for (int i = 0; i < n; ++i) {
         Point P;
-        cout << "Точка " << i + 1 << " (x y): ";
+        cout << "Point " << i + 1 << " (x y): ";
         cin >> P.X >> P.Y;
 
-        // Виклик методу через об'єкт трикутника
-        string ResultVector = T.GetCrossPointLocation(P);
-        string ResultHeron = T.GetPointLocationHeron(P); 
-        cout << "Результат для точки методом векторного добутку(" << P.X << ", " << P.Y << "): " << ResultVector << endl;
+        string resultVector = T.GetCrossPointLocation(P);
+        string resultHeron = T.GetPointLocationHeron(P);
 
-        cout << "Результат для точки методом Герона добутку(" << P.X << ", " << P.Y << "): " << ResultHeron << endl;
+        cout << "Cross product method (" << P.X << ", " << P.Y << "): " << resultVector << endl;
+        cout << "Heron method (" << P.X << ", " << P.Y << "): " << resultHeron << endl;
     }
 
     return 0;
