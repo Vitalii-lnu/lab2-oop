@@ -86,7 +86,7 @@ std::string Triangle::GetCrossPointLocation(Point P) const {
 }
 
 std::string Triangle::GetPointLocationHeron(Point P) const {
-    const double EPS = 1e-9;
+    const double EPS = 1e-18;
 
     if (IsDegenerate()) {
         if (IsPointOnSegment(A, B, P) ||
