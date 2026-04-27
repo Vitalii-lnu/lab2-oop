@@ -3,28 +3,28 @@
 
 #include <string>
 #include <cmath>
+#include <algorithm>
 
 struct Point {
     double X, Y;
 
-    double DistanceTo(Point Other) const;
+    double DistanceTo(const Point& Other) const;
 };
 
 struct Triangle {
     Point A, B, C;
 
-    double GetArea(Point A, Point B, Point C) const;
+    double GetArea(const Point& A, const Point& B, const Point& C) const;
     double GetArea() const;
 
     bool IsDegenerate() const;
 
-    double GetCrossProduct(Point P1, Point P2, Point P) const;
+    double Cross(const Point& P1, const Point& P2, const Point& P) const;
 
-    std::string GetCrossPointLocation(Point P) const;
-    std::string GetPointLocationHeron(Point P) const;
+    std::string GetCrossPointLocation(const Point& P) const;
+    std::string GetPointLocationHeron(const Point& P) const;
 };
 
-// Для трикутника з площею 0
-bool IsPointOnSegment(Point A, Point B, Point P);
+bool IsPointOnSegment(const Point& A, const Point& B, const Point& P);
 
 #endif
