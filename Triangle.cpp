@@ -1,28 +1,24 @@
 #include "Triangle.h"
+#include <cmath>
+#include <algorithm>
+
+using namespace std;
 
 
-double Point::DistanceTo(Point Other) const {
-    return std::sqrt(std::pow(Other.X - X, 2) + std::pow(Other.Y - Y, 2));
-}
+static const double EPS = 1e-9;
+
 
 
 double Triangle::GetArea(Point A, Point B, Point C) const {
-    double a = A.DistanceTo(B);
-    double b = B.DistanceTo(C);
-    double c = C.DistanceTo(A);
-
-    double s = (a + b + c) / 2.0;
-
-    double areaSq = s * (s - a) * (s - b) * (s - c);
-    return std::sqrt(std::max(0.0, areaSq));
+    return fabs(
+        A.X * (B.Y - C.Y) +
+        B.X * (C.Y - A.Y) +
+        C.X * (A.Y - B.Y)
+    ) / 2.0;
 }
 
 double Triangle::GetArea() const {
     return GetArea(A, B, C);
-}
-
-bool Triangle::IsDegenerate() const {
-    return GetArea() < 1e-9;
 }
 
 double Triangle::GetCrossProduct(Point P1, Point P2, Point P) const {
@@ -31,80 +27,105 @@ double Triangle::GetCrossProduct(Point P1, Point P2, Point P) const {
 }
 
 
+
+
+bool Triangle::IsDegenerate() const {
+
+    double a = hypot(A.X - B.X, A.Y - B.Y);
+    double b = hypot(B.X - C.X, B.Y - C.Y);
+    double c = hypot(C.X - A.X, C.Y - A.Y);
+
+    double maxSide = max({a, b, c});
+
+    if (maxSide < EPS) return true;
+
+    double height = (2.0 * GetArea()) / maxSide;
+
+    
+    return height < 1e-7;
+}
+
+bool Triangle::IsDegeneratePrint() const{
+    return GetArea() < 1e-9;
+}
+
+
+
 bool IsPointOnSegment(Point A, Point B, Point P) {
-    const double EPS = 1e-9;
 
-    if (std::abs(A.X - B.X) < EPS && std::abs(A.Y - B.Y) < EPS) {
-        return (std::abs(P.X - A.X) < EPS && std::abs(P.Y - A.Y) < EPS);
-    }
-
-    // Перевірка колінеарність
     double cross = (B.X - A.X) * (P.Y - A.Y) -
                    (B.Y - A.Y) * (P.X - A.X);
-    if (std::abs(cross) > EPS) return false;
 
-    // Перевірка проєкції
-    double dot = (P.X - A.X) * (B.X - A.X) +
-                 (P.Y - A.Y) * (B.Y - A.Y);
-    if (dot < 0) return false;
+    if (fabs(cross) > EPS) return false;
 
-    double lenSq = (B.X - A.X) * (B.X - A.X) +
-                   (B.Y - A.Y) * (B.Y - A.Y);
-    if (dot > lenSq) return false;
+    if (P.X < min(A.X, B.X) - EPS || P.X > max(A.X, B.X) + EPS)
+        return false;
+
+    if (P.Y < min(A.Y, B.Y) - EPS || P.Y > max(A.Y, B.Y) + EPS)
+        return false;
 
     return true;
 }
 
 
-std::string Triangle::GetCrossPointLocation(Point P) const {
-    const double EPS = 1e-9;
+bool OnDegenerateTriangle(const Triangle& T, Point P) {
+
+    double dAB = hypot(T.A.X - T.B.X, T.A.Y - T.B.Y);
+    double dBC = hypot(T.B.X - T.C.X, T.B.Y - T.C.Y);
+    double dCA = hypot(T.C.X - T.A.X, T.C.Y - T.A.Y);
+
+    Point S = T.A, E = T.B;
+    double maxD = dAB;
+
+    if (dBC > maxD) { S = T.B; E = T.C; maxD = dBC; }
+    if (dCA > maxD) { S = T.C; E = T.A; }
+
+    return IsPointOnSegment(S, E, P);
+}
+
+
+
+string Triangle::GetCrossPointLocation(Point P) const {
 
     if (IsDegenerate()) {
-        if (IsPointOnSegment(A, B, P) ||
-            IsPointOnSegment(B, C, P) ||
-            IsPointOnSegment(C, A, P)) {
-            return "On line (degenerate)";
-        }
+        if (OnDegenerateTriangle(*this, P))
+            return "Inside";
         return "Outside";
     }
 
-    double CP1 = GetCrossProduct(A, B, P);
-    double CP2 = GetCrossProduct(B, C, P);
-    double CP3 = GetCrossProduct(C, A, P);
+    double cp1 = GetCrossProduct(A, B, P);
+    double cp2 = GetCrossProduct(B, C, P);
+    double cp3 = GetCrossProduct(C, A, P);
 
-    bool hasNeg = (CP1 < -EPS) || (CP2 < -EPS) || (CP3 < -EPS);
-    bool hasPos = (CP1 > EPS) || (CP2 > EPS) || (CP3 > EPS);
+    bool hasNeg = (cp1 < -EPS) || (cp2 < -EPS) || (cp3 < -EPS);
+    bool hasPos = (cp1 > EPS) || (cp2 > EPS) || (cp3 > EPS);
 
     if (hasNeg && hasPos) return "Outside";
 
-    if (std::abs(CP1) < EPS ||
-        std::abs(CP2) < EPS ||
-        std::abs(CP3) < EPS)
+    if (fabs(cp1) < EPS || fabs(cp2) < EPS || fabs(cp3) < EPS)
         return "On edge";
 
     return "Inside";
 }
 
-std::string Triangle::GetPointLocationHeron(Point P) const {
-    const double EPS = 1e-10;
+
+
+string Triangle::GetPointLocationHeron(Point P) const {
 
     if (IsDegenerate()) {
-        if (IsPointOnSegment(A, B, P) ||
-            IsPointOnSegment(B, C, P) ||
-            IsPointOnSegment(C, A, P)) {
-            return "On line (degenerate)";
-        }
+        if (OnDegenerateTriangle(*this, P))
+            return "Inside";
         return "Outside";
     }
 
-    double area1 = GetArea(P, A, B);
-    double area2 = GetArea(P, A, C);
-    double area3 = GetArea(P, B, C);
+    double a1 = GetArea(P, A, B);
+    double a2 = GetArea(P, B, C);
+    double a3 = GetArea(P, C, A);
 
-    double totalArea = GetArea();
+    double total = GetArea();
 
-    if (std::abs((area1 + area2 + area3) - totalArea) < EPS) {
-        if (area1 < EPS || area2 < EPS || area3 < EPS)
+    if (fabs((a1 + a2 + a3) - total) < EPS) {
+        if (a1 < EPS || a2 < EPS || a3 < EPS)
             return "On edge";
         return "Inside";
     }

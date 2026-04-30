@@ -2,12 +2,9 @@
 #define TRIANGLE_H
 
 #include <string>
-#include <cmath>
 
 struct Point {
     double X, Y;
-
-    double DistanceTo(Point Other) const;
 };
 
 struct Triangle {
@@ -17,6 +14,7 @@ struct Triangle {
     double GetArea() const;
 
     bool IsDegenerate() const;
+    bool IsDegeneratePrint() const;
 
     double GetCrossProduct(Point P1, Point P2, Point P) const;
 
@@ -24,7 +22,6 @@ struct Triangle {
     std::string GetPointLocationHeron(Point P) const;
 };
 
-// Для трикутника з площею 0
 bool IsPointOnSegment(Point A, Point B, Point P);
 
 #endif
